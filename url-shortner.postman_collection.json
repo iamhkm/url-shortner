@@ -1,0 +1,116 @@
+{
+	"info": {
+		"_postman_id": "c6cacebc-46c1-4b31-ac81-d7c2c2a87fc6",
+		"name": "url-shortner",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "12343832"
+	},
+	"item": [
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"\",\r\n    \"password\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://wus3pgnach.execute-api.ap-south-1.amazonaws.com/dev/user/signup"
+					},
+					"response": []
+				},
+				{
+					"name": "confirm-sign-up",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"\",\r\n    \"confirmation_code\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://wus3pgnach.execute-api.ap-south-1.amazonaws.com/dev/user/confirm-sign-up"
+					},
+					"response": []
+				},
+				{
+					"name": "sign-in",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"\",\r\n    \"password\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://wus3pgnach.execute-api.ap-south-1.amazonaws.com/dev/user/sign-in"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "urls",
+			"item": [
+				{
+					"name": "hit-url",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "https://wus3pgnach.execute-api.ap-south-1.amazonaws.com/dev/url/f14bc6d2-8690-4984-a33f-e98fbdba40f6"
+					},
+					"response": []
+				},
+				{
+					"name": "add-url",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": ""
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"url\": \"https://www.google.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://wus3pgnach.execute-api.ap-south-1.amazonaws.com/dev/url/add-url"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "healthCheck",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "https://wus3pgnach.execute-api.ap-south-1.amazonaws.com/dev/healthCheck"
+			},
+			"response": []
+		}
+	]
+}

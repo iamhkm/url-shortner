@@ -1,0 +1,21 @@
+{
+  "name": "url-shortner-api",
+  "version": "1.0.0",
+  "description": "This project contains api for url-shortner",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "jest test"
+  },
+  "keywords": [
+    "url-shortner"
+  ],
+  "author": "Himanshu Mittal",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.592.0",
+    "@aws-sdk/client-dynamodb": "^3.592.0",
+    "@aws-sdk/lib-dynamodb": "^3.592.0",
+    "uuid": "^10.0.0"
+  }
+}

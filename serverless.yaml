@@ -1,0 +1,148 @@
+service: url-shortner
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ap-south-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:List*
+        - dynamodb:DescribeReservedCapacity*
+        - dynamodb:DescribeLimits
+        - dynamodb:DescribeTimeToLive
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: arn:aws:dynamodb:ap-south-1:${aws:accountId}:table/shorten-urls*
+    - Effect: Allow
+      Action:
+        - cognito-idp:ListUsers
+        - cognito-idp:AdminDeleteUser
+        - cognito-idp:AdminDisableUser
+        - cognito-idp:AdminEnableUser
+        - cognito-idp:AdminGetUser
+        - cognito-idp:AdminUpdateUserAttributes
+        - cognito-idp:AdminSetUserPassword
+        - cognito-idp:AdminCreateUser
+      Resource: "*"
+  environment:
+    client_id: !Ref MyUserPoolClient
+frameworkVersion: 3
+functions:
+  healthCheck:
+    handler: src/healthCheck.ping
+    events:
+      - http:
+          path: healthCheck
+          method: get
+  addUrl:
+    handler: src/url-shortner/addShortner.addShortner
+    events:
+      - http:
+          path: url/add-url
+          method: post
+          authorizer:
+            name: MyCognitoAuthorizer
+            type: COGNITO_USER_POOLS
+            arn: arn:aws:cognito-idp:ap-south-1:${aws:accountId}:userpool/{env:pool_id}
+  hitUrl:
+    handler: src/url-shortner/hitUrl.hitUrl
+    events:
+      - http:
+          path: url/{uuid}
+          method: get
+  signup:
+    handler: src/user/signup.signup
+    events:
+      - http:
+          path: user/signup
+          method: post
+  confirm-signup:
+    handler: src/user/confirmSignup.confirmSignup
+    events:
+      - http:
+          path: user/confirm-sign-up
+          method: post
+  signin:
+    handler: src/user/signin.signin
+    events:
+      - http:
+          path: user/sign-in
+          method: post
+
+resources:
+  Resources:
+    UserPool:
+      Type: "AWS::Cognito::UserPool"
+      Properties:
+        UserPoolName: url-shortner-users
+        AliasAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+        EmailConfiguration:
+          EmailSendingAccount: DEVELOPER
+          From: ${env:email}
+          ReplyToEmailAddress: ${env:email}
+          SourceArn: arn:aws:ses:ap-south-1:${aws:accountId}:identity/${env:email}
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireLowercase: true
+            RequireNumbers: true
+            RequireSymbols: true
+            RequireUppercase: true
+        Schema:
+          - Name: email
+            AttributeDataType: String
+            Required: true
+            Mutable: false
+          - AttributeDataType: String
+            DeveloperOnlyAttribute: false
+            Mutable: true
+            Name: "ROLE"
+            Required: false
+    MyUserPoolClient:
+      Type: "AWS::Cognito::UserPoolClient"
+      DependsOn:
+        - UserPool
+      Properties:
+        ClientName: url-shortner-user-pool-client
+        UserPoolId: !Ref UserPool
+        GenerateSecret: false
+        AllowedOAuthFlowsUserPoolClient: false
+        ExplicitAuthFlows:
+          - ALLOW_USER_PASSWORD_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+        AccessTokenValidity: 1
+        IdTokenValidity: 1
+        RefreshTokenValidity: 30
+        TokenValidityUnits:
+          AccessToken: days
+          IdToken: days
+          RefreshToken: days
+    UrlShortenTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: shorten-urls
+        AttributeDefinitions:
+          - AttributeName: uuid
+            AttributeType: S
+        KeySchema:
+          - AttributeName: uuid
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    UrlShortenUsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: shorten-urls-users
+        AttributeDefinitions:
+          - AttributeName: uuid
+            AttributeType: S
+        KeySchema:
+          - AttributeName: uuid
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+#plugins:
+#- serverless-offline
