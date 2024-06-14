@@ -1,5 +1,6 @@
 import {
-    authenticateUser
+    authenticateUser,
+    getUserByToken
 } from "../util/cognitoUtil.js"
 import{
     badResponse,
@@ -15,14 +16,26 @@ export async function signin (event, context){
         if (!input.username || !input.password) throw new Error("username and password is required");
         const authParams = {
             AuthFlow: "USER_PASSWORD_AUTH",
-            ClientId: process.env.client_id, // Replace with your Cognito User Pool Client ID
+            ClientId: process.env.USER_POOL_CLIENT_ID, // Replace with your Cognito User Pool Client ID
             AuthParameters: {
               USERNAME: input.username, // User's email address
               PASSWORD: input.password // User's password
             }
         };
         const result = await authenticateUser(authParams);
-        return successResponse({data: result});
+        const additionalInfo = await getUserByToken(result.AuthenticationResult.AccessToken);
+        const role = additionalInfo.UserAttributes.reduce((acc, curr) => {
+            if (curr.Name == "custom:ROLE") return curr.Value
+            return acc;
+        }, "");
+        const response = {
+            id_token: result.AuthenticationResult.IdToken,
+            access_token: result.AuthenticationResult.AccessToken,
+            refresh_token: result.AuthenticationResult.RefreshToken,
+            role: role,
+            username: additionalInfo.Username
+        }
+        return successResponse(response);
     }catch(err) {
         console.log("Error signing up user", err);
         return badResponse({error: err.message});

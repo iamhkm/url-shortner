@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "c6cacebc-46c1-4b31-ac81-d7c2c2a87fc6",
 		"name": "url-shortner",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "12343832"
 	},
 	"item": [
@@ -23,7 +23,16 @@
 								}
 							}
 						},
-						"url": "https://wus3pgnach.execute-api.ap-south-1.amazonaws.com/dev/user/signup"
+						"url": {
+							"raw": "{{LINK_SHORTNER_URL}}/user/signup",
+							"host": [
+								"{{LINK_SHORTNER_URL}}"
+							],
+							"path": [
+								"user",
+								"signup"
+							]
+						}
 					},
 					"response": []
 				},
@@ -41,7 +50,16 @@
 								}
 							}
 						},
-						"url": "https://wus3pgnach.execute-api.ap-south-1.amazonaws.com/dev/user/confirm-sign-up"
+						"url": {
+							"raw": "{{LINK_SHORTNER_URL}}/user/confirm-sign-up",
+							"host": [
+								"{{LINK_SHORTNER_URL}}"
+							],
+							"path": [
+								"user",
+								"confirm-sign-up"
+							]
+						}
 					},
 					"response": []
 				},
@@ -59,7 +77,44 @@
 								}
 							}
 						},
-						"url": "https://wus3pgnach.execute-api.ap-south-1.amazonaws.com/dev/user/sign-in"
+						"url": {
+							"raw": "{{LINK_SHORTNER_URL}}/user/sign-in",
+							"host": [
+								"{{LINK_SHORTNER_URL}}"
+							],
+							"path": [
+								"user",
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "dashboard",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{LINK_SHORTNER_URL}}/user/me",
+							"host": [
+								"{{LINK_SHORTNER_URL}}"
+							],
+							"path": [
+								"user",
+								"me"
+							]
+						}
 					},
 					"response": []
 				}
@@ -73,7 +128,81 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "https://wus3pgnach.execute-api.ap-south-1.amazonaws.com/dev/url/f14bc6d2-8690-4984-a33f-e98fbdba40f6"
+						"url": {
+							"raw": "{{LINK_SHORTNER_URL}}/url/lf2tIe_59nHuk",
+							"host": [
+								"{{LINK_SHORTNER_URL}}"
+							],
+							"path": [
+								"url",
+								"lf2tIe_59nHuk"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "url",
+			"item": [
+				{
+					"name": "get-url",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{LINK_SHORTNER_URL}}/urls",
+							"host": [
+								"{{LINK_SHORTNER_URL}}"
+							],
+							"path": [
+								"urls"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-url",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{LINK_SHORTNER_URL}}/urls?uuid=90VPkj",
+							"host": [
+								"{{LINK_SHORTNER_URL}}"
+							],
+							"path": [
+								"urls"
+							],
+							"query": [
+								{
+									"key": "uuid",
+									"value": "90VPkj"
+								}
+							]
+						}
 					},
 					"response": []
 				},
@@ -82,22 +211,76 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": ""
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
 						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"url\": \"https://www.google.com\"\r\n}",
+							"raw": "{\r\n    \"url\": \"https://www.amazon.in/Voltas-Cooler-Cooling-Settings-Litres/dp/B0CSPDX87K/?_encoding=UTF8&pd_rd_w=8hdHG&content-id=amzn1.sym.df161508-a995-4764-931a-cf21efe429b8%3Aamzn1.symc.ecead27c-800a-401e-a631-4760610d717a&pf_rd_p=df161508-a995-4764-931a-cf21efe429b8&pf_rd_r=B03VBSMWY7VC1P7D36R5&pd_rd_wg=fazB2&pd_rd_r=4e049b84-619c-4007-ad13-fefbbf466ce6&ref_=pd_hp_d_atf_ci_mcx_mr_hp_atf_m\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "https://wus3pgnach.execute-api.ap-south-1.amazonaws.com/dev/url/add-url"
+						"url": {
+							"raw": "{{LINK_SHORTNER_URL}}/urls",
+							"host": [
+								"{{LINK_SHORTNER_URL}}"
+							],
+							"path": [
+								"urls"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-url",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{LINK_SHORTNER_URL}}/urls?uuid=3XxNzh",
+							"host": [
+								"{{LINK_SHORTNER_URL}}"
+							],
+							"path": [
+								"urls"
+							],
+							"query": [
+								{
+									"key": "uuid",
+									"value": "3XxNzh"
+								}
+							]
+						}
 					},
 					"response": []
 				}
@@ -108,7 +291,15 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "https://wus3pgnach.execute-api.ap-south-1.amazonaws.com/dev/healthCheck"
+				"url": {
+					"raw": "{{LINK_SHORTNER_URL}}/healthCheck",
+					"host": [
+						"{{LINK_SHORTNER_URL}}"
+					],
+					"path": [
+						"healthCheck"
+					]
+				}
 			},
 			"response": []
 		}

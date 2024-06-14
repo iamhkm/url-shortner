@@ -3,12 +3,15 @@ import {
 } from "../util/cognitoUtil.js"
 import{
   badResponse,
-  successResponse
+  successResponse,
+  generateRandomString,
+  createStats
 } from "../util/common.js"
+import { MATRIX_TYPE_USER, USER_ROLE_BASIC } from "../util/constants.js";
 import {
+  getRecord,
   insertRecord
 } from "../util/dynamoUtil.js"
-import { v4 as uuidv4 } from 'uuid';
 
 export async function signup (event, context){
     try{
@@ -17,9 +20,9 @@ export async function signup (event, context){
         if (!body) throw new Error("request body can not be empty");
         const input = JSON.parse(body);
         if (!input.username || !input.password) throw new Error("username and password is required");
-        const username = uuidv4();
+        const username = generateRandomString();
         const signUpParams = {
-            ClientId: process.env.client_id,
+            ClientId: process.env.USER_POOL_CLIENT_ID,
             Username: username,
             Password: input.password,
             UserAttributes: [
@@ -29,22 +32,39 @@ export async function signup (event, context){
               },
               {
                 Name: "custom:ROLE", // Custom attribute name
-                Value: "BASIC" // Custom attribute value
+                Value: USER_ROLE_BASIC // Custom attribute value
               }
             ]
           };
         await signUpUser(signUpParams);
         const record = {
-            TableName: "shorten-urls-users",
+            TableName: process.env.SHORTNER_URLS_USERS_TABLE,
             Item: {
-              uuid: username,
+              unique_id: username,
               email: input.username,
-              role: "BASIC",
-              added_date: new Date().getTime()
+              added_date: new Date().getTime(),
+              total_url: 0,
+              total_active: 0
             }
         };
         await insertRecord(record);
-        return successResponse({id: username});
+        let userStats = await getRecord({
+          TableName: process.env.ADMIN_STATS_TABLE,
+          Key: {
+            matrix_type: MATRIX_TYPE_USER,
+          }
+        });
+        if (!userStats) {
+          userStats = {
+            matrix_type: MATRIX_TYPE_USER
+          }
+        }
+        createStats(userStats, "stats");
+        await insertRecord({
+          TableName: process.env.ADMIN_STATS_TABLE,
+          Item: userStats
+        });
+        return successResponse({id: username, message: "signup success... please confirm using otp"});
     }catch(err) {
         console.log("Error signing up user", err);
         return badResponse({error: err.message});

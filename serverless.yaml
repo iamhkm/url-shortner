@@ -14,20 +14,26 @@ provider:
     - Effect: Allow
       Action:
         - dynamodb:*
-      Resource: arn:aws:dynamodb:ap-south-1:${aws:accountId}:table/shorten-urls*
-    - Effect: Allow
-      Action:
-        - cognito-idp:ListUsers
-        - cognito-idp:AdminDeleteUser
-        - cognito-idp:AdminDisableUser
-        - cognito-idp:AdminEnableUser
-        - cognito-idp:AdminGetUser
-        - cognito-idp:AdminUpdateUserAttributes
-        - cognito-idp:AdminSetUserPassword
-        - cognito-idp:AdminCreateUser
-      Resource: "*"
+      Resource: arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/shorten-urls*
+    # - Effect: Allow
+    #   Action:
+    #     - cognito-idp:ListUsers
+    #     - cognito-idp:AdminDeleteUser
+    #     - cognito-idp:AdminDisableUser
+    #     - cognito-idp:AdminEnableUser
+    #     - cognito-idp:AdminGetUser
+    #     - cognito-idp:AdminUpdateUserAttributes
+    #     - cognito-idp:AdminSetUserPassword
+    #     - cognito-idp:AdminCreateUser
+    #   Resource: "*"
   environment:
-    client_id: !Ref MyUserPoolClient
+    USER_POOL_CLIENT_ID: !Ref MyUserPoolClient
+    USER_POOL_ID: !Ref UserPool
+    BASIC_USER_ALLOWED_URLS: 100
+    SHORTNER_URLS_TABLE: shorten-urls
+    SHORTNER_URLS_USERS_TABLE: shorten-urls-users
+    ADMIN_STATS_TABLE: shorten-urls-admin-matrix
+    AWS_SES_IDENTITY: himanshumittal2014@gmail.com
 frameworkVersion: 3
 functions:
   healthCheck:
@@ -37,21 +43,61 @@ functions:
           path: healthCheck
           method: get
   addUrl:
-    handler: src/url-shortner/addShortner.addShortner
+    handler: src/url/addUrl.addUrl
     events:
       - http:
-          path: url/add-url
+          path: urls
+          method: put
+          authorizer:
+            name: MyCognitoAuthorizer
+            type: COGNITO_USER_POOLS
+            arn: !GetAtt UserPool.Arn
+  getUrl:
+    handler: src/url/getUrl.getUrl
+    events:
+      - http:
+          path: urls
+          method: get
+          authorizer:
+            name: MyCognitoAuthorizer
+            type: COGNITO_USER_POOLS
+            arn: !GetAtt UserPool.Arn
+  deleteUrl:
+    handler: src/url/deleteUrl.deleteUrl
+    events:
+      - http:
+          path: urls
+          method: delete
+          authorizer:
+            name: MyCognitoAuthorizer
+            type: COGNITO_USER_POOLS
+            arn: !GetAtt UserPool.Arn
+  updateUrl:
+    handler: src/url/updateUrl.updateUrl
+    events:
+      - http:
+          path: urls
           method: post
           authorizer:
             name: MyCognitoAuthorizer
             type: COGNITO_USER_POOLS
-            arn: arn:aws:cognito-idp:ap-south-1:${aws:accountId}:userpool/{env:pool_id}
+            arn: !GetAtt UserPool.Arn
   hitUrl:
     handler: src/url-shortner/hitUrl.hitUrl
     events:
       - http:
           path: url/{uuid}
           method: get
+  dashboard:
+    handler: src/user/dashboard.dashboard
+    events:
+      - http:
+          path: user/me
+          method: get
+          authorizer:
+            name: MyCognitoAuthorizer2
+            type: COGNITO_USER_POOLS
+            arn: !GetAtt UserPool.Arn
   signup:
     handler: src/user/signup.signup
     events:
@@ -83,9 +129,9 @@ resources:
           - email
         EmailConfiguration:
           EmailSendingAccount: DEVELOPER
-          From: ${env:email}
-          ReplyToEmailAddress: ${env:email}
-          SourceArn: arn:aws:ses:ap-south-1:${aws:accountId}:identity/${env:email}
+          From: ${self:provider.environment.AWS_SES_IDENTITY}
+          ReplyToEmailAddress: ${self:provider.environment.AWS_SES_IDENTITY}
+          SourceArn: arn:aws:ses:${self:provider.region}:${aws:accountId}:identity/${self:provider.environment.AWS_SES_IDENTITY}
         Policies:
           PasswordPolicy:
             MinimumLength: 8
@@ -125,23 +171,38 @@ resources:
     UrlShortenTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: shorten-urls
+        TableName: ${self:provider.environment.SHORTNER_URLS_TABLE}
         AttributeDefinitions:
-          - AttributeName: uuid
+          - AttributeName: unique_id
+            AttributeType: S
+          - AttributeName: user_id
             AttributeType: S
         KeySchema:
-          - AttributeName: uuid
+          - AttributeName: user_id
             KeyType: HASH
+          - AttributeName: unique_id
+            KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
     UrlShortenUsersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: shorten-urls-users
+        TableName: ${self:provider.environment.SHORTNER_URLS_USERS_TABLE}
         AttributeDefinitions:
-          - AttributeName: uuid
+          - AttributeName: unique_id
             AttributeType: S
         KeySchema:
-          - AttributeName: uuid
+          - AttributeName: unique_id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    AdminStatsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.ADMIN_STATS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: matrix_type
+            AttributeType: S
+        KeySchema:
+          - AttributeName: matrix_type
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
 #plugins:

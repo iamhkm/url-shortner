@@ -14,7 +14,7 @@ export async function confirmSignup (event, context){
         const input = JSON.parse(body);
         if (!input.username || !input.confirmation_code) throw new Error("username and confirmation_code is required");
         const confirmationParams = {
-            ClientId: process.env.client_id,
+            ClientId: process.env.USER_POOL_CLIENT_ID,
             Username: input.username,
             ConfirmationCode: input.confirmation_code
           };

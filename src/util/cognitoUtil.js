@@ -2,7 +2,8 @@ import {
   CognitoIdentityProviderClient,
   SignUpCommand,
   ConfirmSignUpCommand,
-  InitiateAuthCommand
+  InitiateAuthCommand,
+  GetUserCommand
 } from "@aws-sdk/client-cognito-identity-provider";
 
 // Initialize the Cognito Client
@@ -32,6 +33,19 @@ export async function authenticateUser(authParams) {
   }
 };
 
+export async function getUserByToken(token){
+  try {
+    const command = new GetUserCommand({
+      AccessToken: token
+    });
+    const response = await client.send(command);
+    return response;
+  } catch (error) {
+    console.error("Error authenticating user:", error);
+    throw new Error(error.message);
+  }
+}
+
 // Function to confirm user signup
 export async function confirmUserSignup(confirmationParams) {
     try {
@@ -42,4 +56,4 @@ export async function confirmUserSignup(confirmationParams) {
       console.error("Error confirming user signup:", error);
       throw new Error(error.message);
     }
-  };
+};
