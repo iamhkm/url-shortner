@@ -1,14 +1,22 @@
 export function successResponse (body){
     return {
         statusCode: 200,
-        body: (typeof body === "string") ? body : JSON.stringify(body)
+        body: (typeof body === "string") ? body : JSON.stringify(body),
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Cache-Control": "no-cache",
+        },
     }
 }
 
 export function badResponse (body){
     return {
         statusCode: 400,
-        body: (typeof body === "string") ? body : JSON.stringify(body)
+        body: (typeof body === "string") ? body : JSON.stringify(body),
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Cache-Control": "no-cache",
+        },
     }
 }
 

@@ -42,12 +42,14 @@ functions:
       - http:
           path: healthCheck
           method: get
+          cors: true
   addUrl:
     handler: src/url/addUrl.addUrl
     events:
       - http:
           path: urls
           method: put
+          cors: true
           authorizer:
             name: MyCognitoAuthorizer
             type: COGNITO_USER_POOLS
@@ -58,6 +60,7 @@ functions:
       - http:
           path: urls
           method: get
+          cors: true
           authorizer:
             name: MyCognitoAuthorizer
             type: COGNITO_USER_POOLS
@@ -68,6 +71,7 @@ functions:
       - http:
           path: urls
           method: delete
+          cors: true
           authorizer:
             name: MyCognitoAuthorizer
             type: COGNITO_USER_POOLS
@@ -78,6 +82,7 @@ functions:
       - http:
           path: urls
           method: post
+          cors: true
           authorizer:
             name: MyCognitoAuthorizer
             type: COGNITO_USER_POOLS
@@ -88,12 +93,14 @@ functions:
       - http:
           path: url/{uuid}
           method: get
+          cors: true
   dashboard:
     handler: src/user/dashboard.dashboard
     events:
       - http:
           path: user/me
           method: get
+          cors: true
           authorizer:
             name: MyCognitoAuthorizer2
             type: COGNITO_USER_POOLS
@@ -104,18 +111,21 @@ functions:
       - http:
           path: user/signup
           method: post
+          cors: true
   confirm-signup:
     handler: src/user/confirmSignup.confirmSignup
     events:
       - http:
           path: user/confirm-sign-up
           method: post
+          cors: true
   signin:
     handler: src/user/signin.signin
     events:
       - http:
           path: user/sign-in
           method: post
+          cors: true
 
 resources:
   Resources:

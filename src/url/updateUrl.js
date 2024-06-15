@@ -8,15 +8,21 @@ import {
 } from "../util/dynamoUtil.js"
 
 export async function updateUrl (event, context) {
+    console.log("i am invoked");
     try{
         const uuid = event?.queryStringParameters?.uuid
         const user_id = event.requestContext.authorizer.claims['cognito:username'];
+        console.log(uuid, user_id);
         if (!uuid) throw new Error("uuid is required");
         const body = event.body;
         if (!body) throw new Error("request body can not be empty");
         const input = JSON.parse(body);
+        console.log("input ", input);
         let incomingStatus = input.status;
-        const url = input.url;
+        let url = input.url;
+        const name = input.name;
+        const description = input.description;
+        const tag = input.tags;
         if ((incomingStatus == null || typeof incomingStatus !== "boolean") && (!url || typeof url !== "string")) 
             throw new Error("invalid input");
         const userParam = {
@@ -46,7 +52,20 @@ export async function updateUrl (event, context) {
             }
         };
         if (url) {
+            if (!url.startsWith("https://")) url = `https://${url}`
             record.original_url = url;
+            newChanges = true;
+        }
+        if (name){
+            record.identification_name = name
+            newChanges = true;
+        }
+        if (description){
+            record.description = description
+            newChanges = true;
+        }
+        if (tag && Array.isArray(tag)){
+            record.tag = tag
             newChanges = true;
         }
         if (!newChanges) {
@@ -60,7 +79,7 @@ export async function updateUrl (event, context) {
             }
         });
         if (updatingStatus) {
-            user.total_active = (incomingStatus === true) ? (user.total_active + 1) : (user.total_active - 1);
+            user.total_active = (incomingStatus === 1) ? (user.total_active + 1) : (user.total_active - 1);
             await insertRecord({
                 TableName: process.env.SHORTNER_URLS_USERS_TABLE,
                 Item: user

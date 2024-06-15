@@ -33,7 +33,7 @@ export async function deleteUrl (event, context) {
         console.log(user);
         await deleteRecord(uniqueUrlParam);
         user.total_url = user.total_url - 1;
-        user.total_active = user.total_active - 1;
+        if (url.url_status == 1) user.total_active = user.total_active - 1;
         createStats(user, "delete_stats");
         await insertRecord({
             TableName: process.env.SHORTNER_URLS_USERS_TABLE,

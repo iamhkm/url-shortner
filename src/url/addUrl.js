@@ -18,7 +18,14 @@ export async function addUrl (event, context){
         const body = event.body;
         if (!body) throw new Error("request body can not be empty");
         const input = JSON.parse(body);
-        if (!input.url) throw new Error("provide url that need to be shorten");
+        const {
+            tag,
+            name,
+            description
+        } = input;
+        let url = input.url;
+        if (!input.url || !input.name) throw new Error("provide url and name for identification");
+        if (!url.startsWith("https://")) url = `https://${url}`
         const uuid = generateRandomString();
         const user = await getRecord({
             TableName: process.env.SHORTNER_URLS_USERS_TABLE,
@@ -39,7 +46,8 @@ export async function addUrl (event, context){
             Item: {
               unique_id: uuid ,
               user_id: user_id,
-              original_url: input.url,
+              original_url: url,
+              identification_name: name,
               short_url: shortUrl,
               added_date: dateToday.getTime(),
               last_modified: dateToday.getTime(),
@@ -47,6 +55,8 @@ export async function addUrl (event, context){
               total_hit: 0
             }
         };
+        if (tag && Array.isArray(tag)) record.Item.tag = tag;
+        if (description) record.Item.description = description;
         await insertRecord(record);
         await insertRecord({
             TableName: process.env.SHORTNER_URLS_USERS_TABLE,
