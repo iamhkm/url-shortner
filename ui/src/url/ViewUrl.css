@@ -1,0 +1,125 @@
+/* AddUrl.css */
+
+.signup-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.signup-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+textarea.form-control {
+    height: 100px;
+    resize: vertical;
+}
+
+.btn {
+    padding: 10px 15px;
+    font-size: 16px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.add-tag-button,
+.remove-tag-button {
+    padding: 6px 10px;
+    font-size: 16px;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 4px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.add-tag-button:hover,
+.remove-tag-button:hover {
+    background-color: #218838;
+}
+
+.message {
+    margin-top: 10px;
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
+
+.tag-input-container {
+    display: flex;
+    align-items: center;
+}
+
+.tag-buttons {
+    display: flex;
+    align-items: center;
+}
+/* Dropdown container */
+.dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  /* Dropdown toggle button */
+  .dropdown-toggle {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  /* Dropdown menu */
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    list-style-type: none;
+    padding: 10px 0;
+    margin: 0;
+    min-width: 160px;
+    z-index: 1; /* Ensure dropdown appears above other content */
+  }
+  
+  /* Dropdown menu items */
+  .dropdown-menu li {
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  /* Hover effect on dropdown items */
+  .dropdown-menu li:hover {
+    background-color: #ddd;
+  }

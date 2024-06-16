@@ -1,0 +1,173 @@
+service: url-shortner-ui
+useDotenv: true
+provider:
+  name: aws
+  stage: dev
+  region: ap-south-1
+
+plugins:
+  - serverless-s3-sync
+
+custom:
+  currentStage: dev
+  DOMAIN_PREFIX: url-shortner-ui
+  APP: url-shortner
+  APIGATEWAY_DOMAIN_WO_HTTP: wbx1db3r6d.execute-api.ap-south-1.amazonaws.com
+  SITE_NAME: url-shortner-ui
+  deploymentMethod: direct
+  deploymentBucket: url-shortner-ui
+  s3Sync:
+    - bucketName: url-shortner-ui
+      localDir: build # local directory where static files are present
+
+resources:
+  Description: This stack perform deployment of url shortner ui
+  Resources:
+    WebAppS3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: url-shortner-ui
+        PublicAccessBlockConfiguration:
+          BlockPublicPolicy: false
+          RestrictPublicBuckets: false
+        Tags:
+          - Key: STAGE
+            Value: dev
+          - Key: APP
+            Value: url-shortner
+          - Key: PROCESS
+            Value: url-shortner
+    WebAppS3BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      DependsOn:
+        - WebAppS3Bucket
+      Properties:
+        Bucket:
+          Ref: WebAppS3Bucket
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: PublicReadGetObject
+              Effect: "Allow"
+              Action:
+                - "s3:GetObject"
+              Resource:
+                Fn::Join:
+                  ["", ["arn:aws:s3:::", { "Ref": "WebAppS3Bucket" }, "/*"]]
+              Principal: "*"
+    CloudFrontOriginAccessIdentity:
+      Type: "AWS::CloudFront::CloudFrontOriginAccessIdentity"
+      Properties:
+        CloudFrontOriginAccessIdentityConfig:
+          Comment: url-shortner-ui
+    # cloudfront configuration
+    WebAppCloudFrontDistribution:
+      Type: AWS::CloudFront::Distribution
+      DependsOn:
+        - WebAppS3Bucket
+        # - HostedZone
+        - CloudFrontOriginAccessIdentity
+      Properties:
+        DistributionConfig:
+          Origins:
+            - DomainName:
+                Fn::Join:
+                  [
+                    "",
+                    [
+                      { "Ref": "WebAppS3Bucket" },
+                      ".s3.",
+                      { "Ref": "AWS::Region" },
+                      ".amazonaws.com",
+                    ],
+                  ]
+              OriginPath: ""
+              Id: url-shortner-ui
+              S3OriginConfig:
+                OriginAccessIdentity:
+                  Fn::Join:
+                    [
+                      "",
+                      [
+                        "origin-access-identity/cloudfront/",
+                        { "Ref": "CloudFrontOriginAccessIdentity" },
+                      ],
+                    ]
+
+            - DomainName: ${self:custom.APIGATEWAY_DOMAIN_WO_HTTP} # ["", [{ "Ref": "ApiGatewayAPI" }, ".s3.", { "Ref": "AWS::Region" }, ".amazonaws.com"]]
+              OriginPath: ""
+              Id: url-shortner-ui-apigateway
+              CustomOriginConfig:
+                HTTPPort: "80"
+                HTTPSPort: "443"
+                OriginProtocolPolicy: https-only
+          Enabled: "true"
+          DefaultRootObject: index.html
+          ## Since the Single Page App is taking care of the routing we need to make sure ever path is served with index.html
+          ## The only exception are files that actually exist e.h. app.js, reset.css
+          CustomErrorResponses:
+            - ErrorCode: 404
+              ResponseCode: 200
+              ResponsePagePath: /index.html
+          # origin behavior
+          DefaultCacheBehavior:
+            AllowedMethods:
+              - DELETE
+              - GET
+              - HEAD
+              - OPTIONS
+              - PATCH
+              - POST
+              - PUT
+            ## The origin id defined above
+            TargetOriginId: url-shortner-ui
+            ## Defining if and how the QueryString and Cookies are forwarded to the origin which in this case is S3
+            ForwardedValues:
+              QueryString: "true"
+              Cookies:
+                Forward: none
+            ## The protocol that users can use to access the files in the origin. To allow HTTP use `allow-all`
+            # redirects http to https
+            ViewerProtocolPolicy: redirect-to-https
+          CacheBehaviors:
+            - TargetOriginId: url-shortner-ui-apigateway
+              PathPattern: "/dev/*"
+              AllowedMethods:
+                - DELETE
+                - GET
+                - HEAD
+                - OPTIONS
+                - PATCH
+                - POST
+                - PUT
+              ## Defining if and how the QueryString and Cookies are forwarded to the origin which in this case is S3
+              ForwardedValues:
+                QueryString: "true"
+                Cookies:
+                  Forward: none
+                Headers:
+                  - Authorization
+                  - Cache-Control
+              # DefaultTTL: 0
+              # MaxTTL: 300
+              # MinTTL: 0
+              ## The protocol that users can use to access the files in the origin. To allow HTTP use `allow-all`
+              # redirects http to https
+              ViewerProtocolPolicy: redirect-to-https
+
+        Tags:
+          - Key: STAGE
+            Value: dev
+          - Key: APP
+            Value: url-shortner
+          - Key: PROCESS
+            Value: url-shortner
+
+  ## In order to print out the hosted domain via `serverless info` we need to define the DomainName output for CloudFormation
+  Outputs:
+    WebAppS3BucketOutput:
+      Value:
+        "Ref": WebAppS3Bucket
+    WebAppCloudFrontDistributionOutput:
+      Value:
+        "Fn::GetAtt": [WebAppCloudFrontDistribution, DomainName]

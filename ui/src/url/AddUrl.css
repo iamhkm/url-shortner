@@ -1,0 +1,176 @@
+/* AddUrl.css */
+
+.signup-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.signup-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+textarea.form-control {
+    height: 100px;
+    resize: vertical;
+}
+
+.btn {
+    padding: 10px 15px;
+    font-size: 16px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.add-tag-button,
+.remove-tag-button {
+    padding: 6px 10px;
+    font-size: 16px;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 4px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.add-tag-button:hover,
+.remove-tag-button:hover {
+    background-color: #218838;
+}
+
+.message {
+    margin-top: 10px;
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
+
+.tag-input-container {
+    display: flex;
+    align-items: center;
+}
+
+.tag-buttons {
+    display: flex;
+    align-items: center;
+}
+
+.view-url-container {
+    max-width: 600px; /* Adjust max-width as needed */
+    margin: 50px auto; /* Center align and add top margin */
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.view-url-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+textarea.form-control {
+    height: 100px;
+    resize: vertical;
+}
+
+.btn {
+    padding: 10px 15px;
+    font-size: 16px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    max-width: 150px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.add-tag-button,
+.remove-tag-button {
+    padding: 6px 10px;
+    font-size: 16px;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 4px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.add-tag-button:hover,
+.remove-tag-button:hover {
+    background-color: #218838;
+}
+
+.message {
+    margin-top: 10px;
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
+
+.tag-input-container {
+    display: flex;
+    align-items: center;
+}
+
+.tag-buttons {
+    display: flex;
+    align-items: center;
+}
