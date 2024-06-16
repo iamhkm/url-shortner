@@ -7,7 +7,7 @@ import{
   generateRandomString,
   createStats
 } from "../util/common.js"
-import { MATRIX_TYPE_USER, USER_ROLE_BASIC } from "../util/constants.js";
+import { MATRIX_TYPE_USER, USER_ROLE_PRIME } from "../util/constants.js";
 import {
   getRecord,
   insertRecord
@@ -32,7 +32,7 @@ export async function signup (event, context){
               },
               {
                 Name: "custom:ROLE", // Custom attribute name
-                Value: USER_ROLE_BASIC // Custom attribute value
+                Value: USER_ROLE_PRIME // Custom attribute value
               }
             ]
           };
