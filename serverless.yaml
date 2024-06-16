@@ -34,6 +34,7 @@ provider:
     SHORTNER_URLS_USERS_TABLE: shorten-urls-users
     ADMIN_STATS_TABLE: shorten-urls-admin-matrix
     AWS_SES_IDENTITY: himanshumittal2014@gmail.com
+    BASE_URL: d1ban8ovf0qalv.cloudfront.net
 frameworkVersion: 3
 functions:
   healthCheck:

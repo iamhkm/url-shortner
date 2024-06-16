@@ -40,7 +40,7 @@ export async function addUrl (event, context){
         user.total_url+=1;
         user.total_active+=1;
         const dateToday = new Date();
-        const shortUrl = `https://${event.requestContext.domainName}/dev/url/${user_id}_${uuid}`;
+        const shortUrl = `https://${process.env.BASE_URL}/dev/url/${user_id}_${uuid}`;
         const record = {
             TableName: process.env.SHORTNER_URLS_TABLE,
             Item: {
