@@ -13,7 +13,7 @@ export async function deleteUrl (event, context) {
     try{
         const uuid = event?.queryStringParameters?.uuid
         if (!uuid) throw new Error("uuid is required");
-        const user_id = event.requestContext.authorizer.claims['cognito:username'];
+        const user_id = event?.requestContext?.authorizer?.jwt?.claims["cognito:username"];
         const uniqueUrlParam = {
             TableName: process.env.SHORTNER_URLS_TABLE,
             Key: {

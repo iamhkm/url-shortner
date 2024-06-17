@@ -13,8 +13,8 @@ import { BASIC_USER_ALLOWED_URLS, USER_ROLE_BASIC } from "../util/constants.js";
 export async function addUrl (event, context){
     try{
         console.log("event ", event.requestContext.authorizer.claims);
-        const user_id = event.requestContext.authorizer.claims['cognito:username'];
-        const role = event.requestContext.authorizer.claims['custom:ROLE'];
+        const user_id = event?.requestContext?.authorizer?.jwt?.claims["cognito:username"];
+        const role = event?.requestContext?.authorizer?.jwt?.claims["custom:ROLE"];
         const body = event.body;
         if (!body) throw new Error("request body can not be empty");
         const input = JSON.parse(body);
@@ -40,7 +40,7 @@ export async function addUrl (event, context){
         user.total_url+=1;
         user.total_active+=1;
         const dateToday = new Date();
-        const shortUrl = `https://${process.env.BASE_URL}/dev/url/${user_id}_${uuid}`;
+        const shortUrl = `${process.env.BASE_URL}/${user_id}_${uuid}`;
         const record = {
             TableName: process.env.SHORTNER_URLS_TABLE,
             Item: {

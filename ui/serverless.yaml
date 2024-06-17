@@ -4,6 +4,9 @@ provider:
   name: aws
   stage: dev
   region: ap-south-1
+  deploymentBucket:
+    name: url-shortner-hkm-0101
+  deploymentPrefix: url-shortner-ui
 
 plugins:
   - serverless-s3-sync
@@ -12,7 +15,7 @@ custom:
   currentStage: dev
   DOMAIN_PREFIX: url-shortner-ui
   APP: url-shortner
-  APIGATEWAY_DOMAIN_WO_HTTP: wbx1db3r6d.execute-api.ap-south-1.amazonaws.com
+  APIGATEWAY_DOMAIN_WO_HTTP: 68xcuf30o5.execute-api.ap-south-1.amazonaws.com
   SITE_NAME: url-shortner-ui
   deploymentMethod: direct
   deploymentBucket: url-shortner-ui
@@ -36,7 +39,7 @@ resources:
           - Key: APP
             Value: url-shortner
           - Key: PROCESS
-            Value: url-shortner
+            Value: url-shortner-ui
     WebAppS3BucketPolicy:
       Type: AWS::S3::BucketPolicy
       DependsOn:
@@ -131,7 +134,7 @@ resources:
             ViewerProtocolPolicy: redirect-to-https
           CacheBehaviors:
             - TargetOriginId: url-shortner-ui-apigateway
-              PathPattern: "/dev/*"
+              PathPattern: "/api/*" # More specific path for API
               AllowedMethods:
                 - DELETE
                 - GET

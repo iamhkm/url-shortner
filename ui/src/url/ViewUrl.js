@@ -220,7 +220,7 @@ const ViewUrl = () => {
                 <div className="form-group" style={{ position: 'relative', marginBottom: '1rem' }}>
                     <label>Short Url:</label>
                     <a
-                        href={formData.short_url}
+                        href={"https://"+formData.short_url}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{

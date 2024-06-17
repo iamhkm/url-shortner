@@ -11,7 +11,7 @@ export async function updateUrl (event, context) {
     console.log("i am invoked");
     try{
         const uuid = event?.queryStringParameters?.uuid
-        const user_id = event.requestContext.authorizer.claims['cognito:username'];
+        const user_id = event?.requestContext?.authorizer?.jwt?.claims["cognito:username"];
         console.log(uuid, user_id);
         if (!uuid) throw new Error("uuid is required");
         const body = event.body;

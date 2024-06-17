@@ -3,6 +3,22 @@ provider:
   name: aws
   runtime: nodejs18.x
   region: ap-south-1
+  deploymentBucket:
+    name: url-shortner-hkm-0101
+  deploymentPrefix: url-shortner-api
+  httpApi:
+    cors: true
+    authorizers:
+      serviceAuthorizer:
+        identitySource: $request.header.Authorization
+        issuerUrl:
+          Fn::Join:
+            - ""
+            - - "https://cognito-idp."
+              - "${self:provider.region}"
+              - ".amazonaws.com/"
+              - !Ref UserPool
+        audience: !Ref MyUserPoolClient
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -15,17 +31,6 @@ provider:
       Action:
         - dynamodb:*
       Resource: arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/shorten-urls*
-    # - Effect: Allow
-    #   Action:
-    #     - cognito-idp:ListUsers
-    #     - cognito-idp:AdminDeleteUser
-    #     - cognito-idp:AdminDisableUser
-    #     - cognito-idp:AdminEnableUser
-    #     - cognito-idp:AdminGetUser
-    #     - cognito-idp:AdminUpdateUserAttributes
-    #     - cognito-idp:AdminSetUserPassword
-    #     - cognito-idp:AdminCreateUser
-    #   Resource: "*"
   environment:
     USER_POOL_CLIENT_ID: !Ref MyUserPoolClient
     USER_POOL_ID: !Ref UserPool
@@ -34,99 +39,73 @@ provider:
     SHORTNER_URLS_USERS_TABLE: shorten-urls-users
     ADMIN_STATS_TABLE: shorten-urls-admin-matrix
     AWS_SES_IDENTITY: himanshumittal2014@gmail.com
-    BASE_URL: d1ban8ovf0qalv.cloudfront.net
-frameworkVersion: 3
+    BASE_URL: d1bir1axwjid52.cloudfront.net/api
 functions:
   healthCheck:
     handler: src/healthCheck.ping
     events:
-      - http:
-          path: healthCheck
+      - httpApi:
+          path: /api/ping
           method: get
-          cors: true
   addUrl:
     handler: src/url/addUrl.addUrl
     events:
-      - http:
-          path: urls
+      - httpApi:
+          path: /api/urls
           method: put
-          cors: true
-          authorizer:
-            name: MyCognitoAuthorizer
-            type: COGNITO_USER_POOLS
-            arn: !GetAtt UserPool.Arn
+          authorizer: serviceAuthorizer
   getUrl:
     handler: src/url/getUrl.getUrl
     events:
-      - http:
-          path: urls
+      - httpApi:
+          path: /api/urls
           method: get
-          cors: true
-          authorizer:
-            name: MyCognitoAuthorizer
-            type: COGNITO_USER_POOLS
-            arn: !GetAtt UserPool.Arn
+          authorizer: serviceAuthorizer
   deleteUrl:
     handler: src/url/deleteUrl.deleteUrl
     events:
-      - http:
-          path: urls
+      - httpApi:
+          path: /api/urls
           method: delete
-          cors: true
-          authorizer:
-            name: MyCognitoAuthorizer
-            type: COGNITO_USER_POOLS
-            arn: !GetAtt UserPool.Arn
+          authorizer: serviceAuthorizer
   updateUrl:
     handler: src/url/updateUrl.updateUrl
     events:
-      - http:
-          path: urls
+      - httpApi:
+          path: /api/urls
           method: post
-          cors: true
-          authorizer:
-            name: MyCognitoAuthorizer
-            type: COGNITO_USER_POOLS
-            arn: !GetAtt UserPool.Arn
+          authorizer: serviceAuthorizer
   hitUrl:
     handler: src/url-shortner/hitUrl.hitUrl
     events:
-      - http:
-          path: url/{uuid}
+      - httpApi:
+          path: /api/{uuid}
           method: get
-          cors: true
   dashboard:
     handler: src/user/dashboard.dashboard
     events:
-      - http:
-          path: user/me
+      - httpApi:
+          path: /api/user/me
           method: get
-          cors: true
-          authorizer:
-            name: MyCognitoAuthorizer2
-            type: COGNITO_USER_POOLS
-            arn: !GetAtt UserPool.Arn
+          authorizer: serviceAuthorizer
   signup:
     handler: src/user/signup.signup
     events:
-      - http:
-          path: user/signup
+      - httpApi:
+          path: /api/user/signup
           method: post
-          cors: true
   confirm-signup:
     handler: src/user/confirmSignup.confirmSignup
     events:
-      - http:
-          path: user/confirm-sign-up
+      - httpApi:
+          path: /api/user/confirm-sign-up
           method: post
-          cors: true
   signin:
     handler: src/user/signin.signin
     events:
-      - http:
-          path: user/sign-in
+      - httpApi:
+          path: /api/user/sign-in
           method: post
-          cors: true
 
 resources:
   Resources:

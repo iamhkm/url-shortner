@@ -11,8 +11,8 @@ import {
 export async function getUrl (event, context) {
     try{
         const uuid = event?.queryStringParameters?.uuid
-        const user_id = event.requestContext.authorizer.claims['cognito:username'];
-        const role = event.requestContext.authorizer.claims['custom:ROLE'];
+        const user_id = event?.requestContext?.authorizer?.jwt?.claims["cognito:username"];
+        const role = event?.requestContext?.authorizer?.jwt?.claims["custom:ROLE"];
         if (!uuid) {
             const params = {
                 TableName: process.env.SHORTNER_URLS_TABLE, // Replace with your table name

@@ -14,8 +14,8 @@ import {
 
 export async function dashboard (event, context){
     try{
-        const user_id = event.requestContext.authorizer.claims['cognito:username'];
-        const role = event.requestContext.authorizer.claims['custom:ROLE'];
+        const user_id = event?.requestContext?.authorizer?.jwt?.claims["cognito:username"];
+        const role = event?.requestContext?.authorizer?.jwt?.claims["custom:ROLE"];
         const userParam = {
             TableName: process.env.SHORTNER_URLS_USERS_TABLE,
             Key: {
