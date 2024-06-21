@@ -1,5 +1,10 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { PutCommand, GetCommand, QueryCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
+import { PutCommand,
+  GetCommand,
+  QueryCommand,
+  ScanCommand,
+  DeleteCommand 
+} from "@aws-sdk/lib-dynamodb";
 
 // Initialize the DynamoDB Client
 const client = new DynamoDBClient({ region: "ap-south-1" });
@@ -31,6 +36,17 @@ export async function getRecord (input) {
 export async function queryRecord(input){
   try {
     const command = new QueryCommand(input);
+    const response = await client.send(command);
+    return response.Items;
+  } catch (err) {
+    console.log("Error retrieving records:", err);
+    throw new Error(err.message)
+  }
+}
+
+export async function scanRecord(input){
+  try {
+    const command = new ScanCommand(input);
     const response = await client.send(command);
     return response.Items;
   } catch (err) {

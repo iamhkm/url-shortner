@@ -3,6 +3,7 @@ import {
     createStats,
     successResponse
 } from "../util/common.js";
+import { DELETE_URL_STATS_KEY } from "../util/constants.js";
 import {
     getRecord,
     insertRecord,
@@ -34,7 +35,7 @@ export async function deleteUrl (event, context) {
         await deleteRecord(uniqueUrlParam);
         user.total_url = user.total_url - 1;
         if (url.url_status == 1) user.total_active = user.total_active - 1;
-        createStats(user, "delete_stats");
+        createStats(user, DELETE_URL_STATS_KEY);
         await insertRecord({
             TableName: process.env.SHORTNER_URLS_USERS_TABLE,
             Item: user

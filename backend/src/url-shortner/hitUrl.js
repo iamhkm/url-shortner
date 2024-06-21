@@ -1,4 +1,5 @@
 import { badResponse, createStats } from "../util/common.js";
+import { HIT_URL_STATS_KEY } from "../util/constants.js";
 import {
     getRecord
 } from "../util/dynamoUtil.js"
@@ -22,7 +23,7 @@ export async function hitUrl (event, context) {
         if (!record) throw new Error("url not found");
         if (record.url_status !== 1) throw new Error("this url is disabled");
         record.total_hit+=1
-        createStats(record, "hit_stats");
+        createStats(record, HIT_URL_STATS_KEY);
         await insertRecord({
             TableName: process.env.SHORTNER_URLS_TABLE,
             Item: record

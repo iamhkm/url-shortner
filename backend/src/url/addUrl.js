@@ -8,7 +8,11 @@ import{
     getRecord,
     insertRecord
 } from "../util/dynamoUtil.js"
-import { BASIC_USER_ALLOWED_URLS, USER_ROLE_BASIC } from "../util/constants.js";
+import { 
+    BASIC_USER_ALLOWED_URLS,
+    USER_ROLE_BASIC,
+    ADD_URL_STATS_KEY
+} from "../util/constants.js";
 
 export async function addUrl (event, context){
     try{
@@ -36,7 +40,7 @@ export async function addUrl (event, context){
         if (role === USER_ROLE_BASIC && user.total_url >= BASIC_USER_ALLOWED_URLS) {
             throw new Error("you've exhausted your free limit of urls");
         }
-        createStats(user, "add_stats");
+        createStats(user, ADD_URL_STATS_KEY);
         user.total_url+=1;
         user.total_active+=1;
         const dateToday = new Date();
