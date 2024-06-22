@@ -17,7 +17,7 @@ const __dirname = dirname(__filename);
 
 export async function stats () {
     const stats = {};
-    let dateToday = new Date("2025-01-01");
+    let dateToday = new Date();
     let monthlyStats = false;
     let yearlyStats = false;
     if (dateToday.getDate() == 1) {
