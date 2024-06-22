@@ -8,3 +8,17 @@ export const SEND_STATS_VIA_EMAIL = (process.env.SEND_STATS_VIA_EMAIL) ? true : 
 export const ADD_URL_STATS_KEY = "add_stats";
 export const DELETE_URL_STATS_KEY = "delete_stats";
 export const HIT_URL_STATS_KEY = "hit_stats";
+export const MONTH_MAP = {
+    1: "Jan",
+    2: "Feb",
+    3: "Mar",
+    4: "Apr",
+    5: "May",
+    6: "Jun",
+    7: "Jul",
+    8: "Aug",
+    9: "Sep",
+    10: "Oct",
+    11: "Nov",
+    12: "Dec"
+}
