@@ -15,6 +15,10 @@
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.592.0",
     "@aws-sdk/client-dynamodb": "^3.592.0",
-    "@aws-sdk/lib-dynamodb": "^3.592.0"
+    "@aws-sdk/client-s3": "^3.600.0",
+    "@aws-sdk/client-sesv2": "^3.600.0",
+    "@aws-sdk/lib-dynamodb": "^3.592.0",
+    "mime-types": "^2.1.35",
+    "xlsx": "^0.18.5"
   }
 }

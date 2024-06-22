@@ -44,7 +44,8 @@ export async function signup (event, context){
               email: input.username,
               added_date: new Date().getTime(),
               total_url: 0,
-              total_active: 0
+              total_active: 0,
+              stats_enabled: false
             }
         };
         await insertRecord(record);

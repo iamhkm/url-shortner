@@ -31,6 +31,26 @@ provider:
       Action:
         - dynamodb:*
       Resource: arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/shorten-urls*
+    - Effect: Allow
+      Action: lambda:InvokeFunction
+      Resource:
+        - arn:aws:events:${self:provider.region}:${aws:accountId}:function:url-shortner-dev-user-stats
+      Condition:
+        StringEquals:
+          aws:ResourceTag/Name: "url-shortner-stats"
+    - Effect: Allow
+      Action:
+        - s3:ListAllMyBuckets
+        - s3:ListBucket
+      Resource: arn:aws:s3:::*
+    - Effect: Allow
+      Action: s3:*
+      Resource:
+        - arn:aws:s3:::url-shortner-stats/*
+    - Effect: Allow
+      Action: ses:sendMail
+      Resource:
+        - arn:aws:ses:${self:provider.region}:${aws:accountId}:identity/${self:provider.environment.AWS_SES_IDENTITY}
   environment:
     USER_POOL_CLIENT_ID: !Ref MyUserPoolClient
     USER_POOL_ID: !Ref UserPool
@@ -40,6 +60,7 @@ provider:
     ADMIN_STATS_TABLE: shorten-urls-admin-matrix
     AWS_SES_IDENTITY: himanshumittal2014@gmail.com
     BASE_URL: d1bir1axwjid52.cloudfront.net/api
+    STATS_BUCKET: url-shortner-stats
 functions:
   healthCheck:
     handler: src/healthCheck.ping
@@ -106,6 +127,14 @@ functions:
       - httpApi:
           path: /api/user/sign-in
           method: post
+  user-stats:
+    handler: src/stats/stats.stats
+    events:
+      - schedule:
+          name: url-shortner-stats
+          rate: cron(1 0 * * ? *)
+          # rate: cron(0/10 * * * ? *)
+          description: "Runs the user stats Lambda function daily at 00:01"
 
 resources:
   Resources:
@@ -195,5 +224,9 @@ resources:
           - AttributeName: matrix_type
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+    WebAppS3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.STATS_BUCKET}
 #plugins:
 #- serverless-offline
