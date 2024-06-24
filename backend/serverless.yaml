@@ -48,7 +48,7 @@ provider:
       Resource:
         - arn:aws:s3:::url-shortner-stats/*
     - Effect: Allow
-      Action: ses:sendMail
+      Action: ses:SendRawEmail
       Resource:
         - arn:aws:ses:${self:provider.region}:${aws:accountId}:identity/${self:provider.environment.AWS_SES_IDENTITY}
   environment:

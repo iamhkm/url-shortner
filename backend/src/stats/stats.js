@@ -5,15 +5,10 @@ import {
     HIT_URL_STATS_KEY,
     MONTH_MAP
 } from "../util/constants.js"
-import XLSX from "xlsx"
-import { fileURLToPath } from 'url';
-import path, { dirname } from 'path';
-import { uploadLocalFileToS3 } from "../util/s3Util.js"
+// import XLSX from "xlsx"
+import xlsx from 'node-xlsx';
+import { uploadBufferToS3 } from "../util/s3Util.js"
 import { sendStatsViaMail } from "../util/sesUtil.js";
-import fs from 'fs';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 export async function stats () {
     const stats = {};
@@ -34,23 +29,23 @@ export async function stats () {
     for (let user of users){
         createUrlStats(stats, user, year, month, date, monthlyStats, yearlyStats);
         await createHitStats (stats, user.unique_id, year, month, date, monthlyStats, yearlyStats);
+        const urlsData = [stats[user.unique_id].urls.daily];
+        const hitsData = stats[user.unique_id].hits.daily;
+        const urls = [Object.keys(urlsData[0]), ...urlsData.map(obj => Object.values(obj))];
+        const hits = [Object.keys(hitsData[0]), ...hitsData.map(obj => Object.values(obj))]
         //create xlsx and save to s3
-        const workbook = XLSX.utils.book_new();
-        const worksheet = XLSX.utils.json_to_sheet([stats[user.unique_id].urls.daily]);
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'url_stats');
-        const worksheet2 = XLSX.utils.json_to_sheet(stats[user.unique_id].hits.daily);
-        XLSX.utils.book_append_sheet(workbook, worksheet2, 'hit_stats');
-        const filePath = path.join(__dirname, `${user.unique_id}.${year}.${month}.${date}.xlsx`);
-        XLSX.writeFile(workbook, filePath);
-        console.log("file stored locally at Path ", filePath);
-        await uploadLocalFileToS3(
-            filePath,
+        const buffer = xlsx.build([
+            {name: 'url_stats', data: urls},
+            {name: 'hit_stats', data: hits},
+        ]);
+        await uploadBufferToS3(
+            buffer,
             `${user.unique_id}/${year}/${month}/${date}.xlsx`,
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         );
         if (user.stats_enabled === true) {
             await sendStats(
-                filePath,
+                buffer,
                 `${year}-${month}-${date}.xlsx`,
                 user.email, 
                 "Daily",
@@ -58,23 +53,23 @@ export async function stats () {
                 `Url Shortner - Daily Stats Generated For ${date} ${MONTH_MAP[dateToday.getMonth() + 1]} ${year}`,
             )
         }
-        fs.unlinkSync(filePath);
         if (monthlyStats){
-            const workbook = XLSX.utils.book_new();
-            const worksheet = XLSX.utils.json_to_sheet(stats[user.unique_id].urls.monthly.stats);
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'url_stats');
-            const worksheet2 = XLSX.utils.json_to_sheet(stats[user.unique_id].hits.monthly);
-            XLSX.utils.book_append_sheet(workbook, worksheet2, 'hit_stats');
-            const filePath = path.join(__dirname, `${user.unique_id}.${year}.${month}.xlsx`);
-            XLSX.writeFile(workbook, filePath);
-            await uploadLocalFileToS3(
-                filePath,
+            const urlsData = stats[user.unique_id].urls.monthly.stats;
+            const hitsData = stats[user.unique_id].hits.monthly
+            const urls = [Object.keys(urlsData[0]), ...urlsData.map(obj => Object.values(obj))];
+            const hits = [Object.keys(hitsData[0]), ...hitsData.map(obj => Object.values(obj))]
+            const buffer = xlsx.build([
+                {name: 'url_stats', data: urls},
+                {name: 'hit_stats', data: hits},
+            ]);
+            await uploadBufferToS3(
+                buffer,
                 `${user.unique_id}/${year}/${month}/stats.xlsx`,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             );
             if (user.stats_enabled === true) {
                 await sendStats(
-                    filePath,
+                    buffer,
                     `${year}-${month}.xlsx`,
                     user.email,
                     "Monthly",
@@ -82,24 +77,24 @@ export async function stats () {
                     `Url Shortner - Monthly Stats Generated For ${MONTH_MAP[MONTH_MAP[dateToday.getMonth() + 1]]} ${year}`,
                 )
             }
-            fs.unlinkSync(filePath);
         }
-        if (monthlyStats){
-            const workbook = XLSX.utils.book_new();
-            const worksheet = XLSX.utils.json_to_sheet(stats[user.unique_id].urls.yearly.stats);
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'url_stats');
-            const worksheet2 = XLSX.utils.json_to_sheet(stats[user.unique_id].hits.yearly);
-            XLSX.utils.book_append_sheet(workbook, worksheet2, 'hit_stats');
-            const filePath = path.join(__dirname, `${user.unique_id}.${year}.xlsx`);
-            XLSX.writeFile(workbook, filePath);
-            await uploadLocalFileToS3(
-                filePath,
+        if (yearlyStats){
+            const urlsData = stats[user.unique_id].urls.yearly.stats;
+            const hitsData = stats[user.unique_id].hits.yearly;
+            const urls = [Object.keys(urlsData[0]), ...urlsData.map(obj => Object.values(obj))];
+            const hits = [Object.keys(hitsData[0]), ...hitsData.map(obj => Object.values(obj))]            
+            const buffer = xlsx.build([
+                {name: 'url_stats', data: urls},
+                {name: 'hit_stats', data: hits},
+            ]);
+            await uploadBufferToS3 (
+                buffer,
                 `${user.unique_id}/${year}/stats.xlsx`,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             );
             if (user.stats_enabled === true) {
                 await sendStats(
-                    filePath,
+                    buffer,
                     `${year}.xlsx`,
                     user.email, 
                     "Yearly",
@@ -107,7 +102,6 @@ export async function stats () {
                     `Url Shortner - Yearly Stats Generated For ${year}`,
                 )
             }
-            fs.unlinkSync(filePath);
         }
     }
 }
@@ -215,9 +209,9 @@ async function createHitStats (stats, user_id, year, month, date, monthlyStats, 
     }
 }
 
-async function sendStats(filePath, fileName, email, statType, from, subject) {
+async function sendStats(buffer, fileName, email, statType, from, subject) {
     await sendStatsViaMail(
-        filePath,
+        buffer,
         fileName,
         [email],
         subject,
@@ -287,5 +281,3 @@ async function sendStats(filePath, fileName, email, statType, from, subject) {
         from
     );
 }
-
-await stats()

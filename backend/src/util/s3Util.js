@@ -1,13 +1,13 @@
 import fs from 'fs';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
-export async function uploadLocalFileToS3 (localFilepath, s3Key, contentType){
+export async function uploadBufferToS3 (buffer, s3Key, contentType){
     const s3Client = new S3Client();
-    const fileContent = fs.readFileSync(localFilepath);
+    // const fileContent = buffer.toString('base64');
     const params = {
         Bucket: process.env.STATS_BUCKET,
         Key: s3Key,
-        Body: fileContent,
+        Body: buffer,
         ContentType: contentType
     };
     try {
