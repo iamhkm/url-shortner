@@ -19,6 +19,6 @@
     "@aws-sdk/client-sesv2": "^3.600.0",
     "@aws-sdk/lib-dynamodb": "^3.592.0",
     "mime-types": "^2.1.35",
-    "xlsx": "^0.18.5"
+    "node-xlsx": "^0.24.0"
   }
 }

@@ -1,13 +1,10 @@
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
-import fs from 'fs';
-import mime from "mime-types";
 
-export async function sendStatsViaMail (filePath, fileName, toAddress, subject, bodyHtml, fromAddress) {
+export async function sendStatsViaMail (buffer, fileName, toAddress, subject, bodyHtml, fromAddress) {
     try {
         const client = new SESv2Client();
-        const fileData = fs.readFileSync(filePath);
-        const fileBase64 = fileData.toString("base64");
-        const fileMimeType = mime.lookup(filePath) || "application/octet-stream";
+        const fileBase64 = buffer.toString("base64");
+        const fileMimeType = "application/octet-stream";
         const params = {
             Destination: {
                 ToAddresses: toAddress,
