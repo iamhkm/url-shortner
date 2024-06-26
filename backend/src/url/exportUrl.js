@@ -1,4 +1,5 @@
 import { 
+    successResponse,
     badResponse,
 } from "../util/common.js";
 import {EXPORT_URL_PROJECTION } from "../util/constants.js";
@@ -34,13 +35,14 @@ export async function exportUrl (event, context) {
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         );
         const url = await getObjectUrl(`${user_id}/url/export/stats.xlsx`);
-        return {
-            statusCode: 301,
-            headers: {
-                "Location": url,
-                "Cache-Control": "no-cache",
-            },
-        };
+        // return {
+        //     statusCode: 301,
+        //     headers: {
+        //         "Location": url,
+        //         "Cache-Control": "no-cache",
+        //     },
+        // };
+        return successResponse({url});
     }catch(err){
         return badResponse({
             error: err.message

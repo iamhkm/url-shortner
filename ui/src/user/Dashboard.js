@@ -3,7 +3,7 @@ import axios from 'axios';
 import "./Dashboard.css";
 import { useNavigate } from 'react-router-dom'; // Import necessary routing components
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faTrashAlt, faBan } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faTrashAlt, faBan, faDownload } from '@fortawesome/free-solid-svg-icons';
 import ProfileImage from "../media/default_profile.jpeg";
 import Chart from "chart.js/auto"; // Importing the Chart.js library
 import { Bar, Line } from "react-chartjs-2";
@@ -25,6 +25,29 @@ const Dashboard = () => {
   const handleAddUrl = () => {
     navigate('/url/new');
   };
+
+  const handleDownloadUrls = async () => {
+    try {
+      const result = await axios.get(`${process.env.REACT_APP_USER_API_ENDPOINT}/urls/export`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("id_token")}`,
+        },
+      });
+      console.log("Result ", result);
+  
+      // Redirect to the download URL
+      window.location.href = result.data.url;
+  
+      // Optional: Add a delay to ensure the download starts before navigating away
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 3000); // Adjust the timeout as needed
+    } catch (error) {
+      console.error("Error fetching the download URL", error);
+      navigate('/dashboard');
+    }
+  };
+  
 
   const handleDisable = (urlId, status) => {
     navigate(`/url/${urlId}/status/${status}`);
@@ -183,7 +206,12 @@ const Dashboard = () => {
       </div>
       <div className="header-container">
         <h2 className="urlHeader">URL Details</h2>
-        <button className="add-button" onClick={handleAddUrl}>+</button>
+        <div className="button-container">
+          <button className="add-button" onClick={handleAddUrl} title="Add New URL">+</button>
+          <button className="download-button" onClick={handleDownloadUrls} title="Export Url">
+            <FontAwesomeIcon icon={faDownload} />
+          </button>
+        </div>
       </div>
       <div className="urlList">
         {data.urls.map(url => (
@@ -194,13 +222,13 @@ const Dashboard = () => {
               <div className="totalHit">Hits: {url.total_hit}</div>
             </div>
             <div className="urlActions">
-              <button className="button" onClick={() => handleView(url.unique_id)}>
+              <button className="button" onClick={() => handleView(url.unique_id)} title='View'>
                 <FontAwesomeIcon icon={faEye} />
               </button>
-              <button className={`button ${getButtonStyle(url.url_status)}`} onClick={() => handleDisable(url.unique_id, (url.url_status === 1) ? 0 : 1)}>
+              <button className={`button ${getButtonStyle(url.url_status)}`} onClick={() => handleDisable(url.unique_id, (url.url_status === 1) ? 0 : 1)} title='enable/disable'>
                 <FontAwesomeIcon icon={faBan} />
               </button>
-              <button className="button" onClick={() => handleDelete(url.unique_id)}>
+              <button className="button" onClick={() => handleDelete(url.unique_id)} title='Delete'>
                 <FontAwesomeIcon icon={faTrashAlt} />
               </button>
             </div>
