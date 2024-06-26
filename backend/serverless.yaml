@@ -82,6 +82,13 @@ functions:
           path: /api/urls
           method: get
           authorizer: serviceAuthorizer
+  exportUrl:
+    handler: src/url/exportUrl.exportUrl
+    events:
+      - httpApi:
+          path: /api/urls/export
+          method: get
+          authorizer: serviceAuthorizer
   deleteUrl:
     handler: src/url/deleteUrl.deleteUrl
     events:
