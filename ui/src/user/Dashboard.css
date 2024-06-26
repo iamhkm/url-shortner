@@ -147,35 +147,40 @@
   color: #ccc;
 }
 
-/* MyComponent.css */
-
 .header-container {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
+  justify-content: space-between;
 }
 
 .urlHeader {
   margin: 0;
-  font-size: 1.5em;
 }
 
+.button-container {
+  display: flex;
+  gap: 10px; /* Adds space between the buttons */
+}
+
+.add-button, .download-button {
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Additional styling for buttons if needed */
 .add-button {
-  background-color: #007bff;
+  background-color: #008CBA; /* Green */
   color: white;
   border: none;
-  padding: 5px 10px;
-  font-size: 1.5em;
-  cursor: pointer;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 4px;
 }
 
-.add-button:hover {
-  background-color: #0056b3;
+.download-button {
+  background-color: #008CBA; /* Blue */
+  color: white;
+  border: none;
+  border-radius: 4px;
 }
 
 /* Dropdown container */
