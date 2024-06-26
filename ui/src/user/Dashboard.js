@@ -4,7 +4,6 @@ import "./Dashboard.css";
 import { useNavigate } from 'react-router-dom'; // Import necessary routing components
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faTrashAlt, faBan } from '@fortawesome/free-solid-svg-icons';
-import ProfileImage from "../media/default_profile.jpeg";
 import Chart from "chart.js/auto"; // Importing the Chart.js library
 import { Bar, Line } from "react-chartjs-2";
 
@@ -152,7 +151,7 @@ const Dashboard = () => {
     <div className="container">
       <div className="header">
         <div className="profile">
-          <img src={ProfileImage} alt="Profile" className="profileImage" />
+        <img src="./media/default_profile.jpeg" alt="Email Notifications" className="profileImage" />
           <span className="username">{data.email}</span>
         </div>
         <button className="logoutButton" onClick={handleLogout}>Logout</button>
