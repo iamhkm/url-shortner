@@ -49,6 +49,10 @@ const Dashboard = () => {
   };
   
 
+  const getProfileImage = (data) => {
+    return data.profile_url ? data.profile_url : ProfileImage
+  }
+
   const handleDisable = (urlId, status) => {
     navigate(`/url/${urlId}/status/${status}`);
   };
@@ -175,7 +179,7 @@ const Dashboard = () => {
     <div className="container">
       <div className="header">
         <div className="profile">
-          <img src={ProfileImage} alt="Profile" className="profileImage" />
+          <img src={getProfileImage(data)} alt="Profile" className="profileImage" />
           <span className="username">{data.email}</span>
         </div>
         <button className="logoutButton" onClick={handleLogout}>Logout</button>
