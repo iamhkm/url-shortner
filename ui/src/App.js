@@ -9,6 +9,7 @@ import UpdateStatus from './url/UpdateStatus'
 import AddUrl from './url/AddUrl'
 import ViewUrl from './url/ViewUrl'
 import UpdateUrl from './url/UpdateUrl'
+import GSignIn from './user/GSignIn'
 
 const App = () => {
     return (
@@ -23,6 +24,7 @@ const App = () => {
                 <Route path="/url/update/:uuid" element={<UpdateUrl />} />
                 <Route path="/url/:uuid/status/:status" element={<UpdateStatus />} />
                 <Route path="/url/new" element={<AddUrl/>} />
+                <Route path="/gsignin" element={<GSignIn/>}/>
             </Routes>
         </Router>
     );

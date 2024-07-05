@@ -51,6 +51,9 @@ provider:
       Action: ses:SendRawEmail
       Resource:
         - arn:aws:ses:${self:provider.region}:${aws:accountId}:identity/${self:provider.environment.AWS_SES_IDENTITY}
+    - Effect: Allow
+      Action: cognito-idp:*
+      Resource: "*"
   environment:
     USER_POOL_CLIENT_ID: !Ref MyUserPoolClient
     USER_POOL_ID: !Ref UserPool
@@ -61,8 +64,8 @@ provider:
     AWS_SES_IDENTITY: himanshumittal2014@gmail.com
     BASE_URL: d1bir1axwjid52.cloudfront.net/api
     STATS_BUCKET: url-shortner-stats
-    GOOGLE_CLIENT_ID: "";
-    GOOGLE_CLIENT_SECRET: "";
+    GOOGLE_CLIENT_ID: ""
+    GOOGLE_CLIENT_SECRET: ""
     GOOGLE_REDIRECT_URI: ""
 functions:
   healthCheck:
@@ -148,13 +151,13 @@ functions:
     events:
       - httpApi:
           path: /api/user/social/url
-          method: post
-  social-signin-initiate:
+          method: get
+  social-signin-verify:
     handler: src/social-sign-in/generateToken.generateToken
     events:
       - httpApi:
           path: /api/user/social/token
-          method: post
+          method: get
 
   user-stats:
     handler: src/stats/stats.stats
@@ -198,9 +201,9 @@ resources:
             Name: "ROLE"
             Required: false
         LambdaConfig:
-          CreateAuthChallenge: arn:aws:lambda:ap-south-1:${aws:accountId}:function:url-shortner-dev-create-auth-challenge
-          DefineAuthChallenge: arn:aws:lambda:ap-south-1:${aws:accountId}:function:url-shortner-dev-define-auth-challenge
-          VerifyAuthChallengeResponse: arn:aws:lambda:ap-south-1:${aws:accountId}:function:url-shortner-dev-verify-auth-challenge
+          CreateAuthChallenge: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:url-shortner-dev-create-auth-challenge
+          DefineAuthChallenge: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:url-shortner-dev-define-auth-challenge
+          VerifyAuthChallengeResponse: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:url-shortner-dev-verify-auth-challenge
     MyUserPoolClient:
       Type: "AWS::Cognito::UserPoolClient"
       DependsOn:
@@ -213,6 +216,7 @@ resources:
         ExplicitAuthFlows:
           - ALLOW_USER_PASSWORD_AUTH
           - ALLOW_REFRESH_TOKEN_AUTH
+          - ALLOW_CUSTOM_AUTH
         AccessTokenValidity: 1
         IdTokenValidity: 1
         RefreshTokenValidity: 30
@@ -220,6 +224,51 @@ resources:
           AccessToken: days
           IdToken: days
           RefreshToken: days
+    PermissionForCognitoToInvokeCreateAuthLambda:
+      Type: AWS::Lambda::Permission
+      DependsOn: UserPool
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:url-shortner-dev-create-auth-challenge
+        Principal: cognito-idp.amazonaws.com
+        SourceArn: !Join
+          - ""
+          - - "arn:aws:cognito-idp:"
+            - !Ref AWS::Region
+            - ":"
+            - !Ref AWS::AccountId
+            - ":userpool/"
+            - !Ref UserPool
+    PermissionForCognitoToInvokeDefineAuthLambda:
+      Type: AWS::Lambda::Permission
+      DependsOn: UserPool
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:url-shortner-dev-define-auth-challenge
+        Principal: cognito-idp.amazonaws.com
+        SourceArn: !Join
+          - ""
+          - - "arn:aws:cognito-idp:"
+            - !Ref AWS::Region
+            - ":"
+            - !Ref AWS::AccountId
+            - ":userpool/"
+            - !Ref UserPool
+    PermissionForCognitoToInvokeVerifyAuthLambda:
+      Type: AWS::Lambda::Permission
+      DependsOn: UserPool
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:url-shortner-dev-verify-auth-challenge
+        Principal: cognito-idp.amazonaws.com
+        SourceArn: !Join
+          - ""
+          - - "arn:aws:cognito-idp:"
+            - !Ref AWS::Region
+            - ":"
+            - !Ref AWS::AccountId
+            - ":userpool/"
+            - !Ref UserPool
     UrlShortenTable:
       Type: AWS::DynamoDB::Table
       Properties:

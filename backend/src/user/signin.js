@@ -18,7 +18,7 @@ export async function signin (event, context){
             AuthFlow: "USER_PASSWORD_AUTH",
             ClientId: process.env.USER_POOL_CLIENT_ID, // Replace with your Cognito User Pool Client ID
             AuthParameters: {
-              USERNAME: input.username, // User's email address
+              USERNAME: input.username.toLowerCase(), // User's email address
               PASSWORD: input.password // User's password
             }
         };

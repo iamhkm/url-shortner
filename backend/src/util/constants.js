@@ -26,8 +26,11 @@ export const MONTH_MAP = {
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
 export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "";
 export const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || "";
+export const USER_POOL_ID = process.env.USER_POOL_ID || "ap-south-1_J8wZNvMu6";
+export const USER_POOL_CLIENT_ID = process.env.USER_POOL_CLIENT_ID || "12epdok3c73n3pr229kc8bqv0i";
 export const AUTH_SCOPES = [
     "https://www.googleapis.com/auth/userinfo.profile",
     "https://www.googleapis.com/auth/userinfo.email"
 ];
 export const maxWrongPasswordAttempts = 5;
+export const COGNITO_CUSTOM_AUTH_CHALLENGE = "12345";
