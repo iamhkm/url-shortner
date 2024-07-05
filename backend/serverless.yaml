@@ -61,6 +61,9 @@ provider:
     AWS_SES_IDENTITY: himanshumittal2014@gmail.com
     BASE_URL: d1bir1axwjid52.cloudfront.net/api
     STATS_BUCKET: url-shortner-stats
+    GOOGLE_CLIENT_ID: "";
+    GOOGLE_CLIENT_SECRET: "";
+    GOOGLE_REDIRECT_URI: ""
 functions:
   healthCheck:
     handler: src/healthCheck.ping
@@ -134,6 +137,25 @@ functions:
       - httpApi:
           path: /api/user/sign-in
           method: post
+  create-auth-challenge:
+    handler: src/cognito-custom-auth/createAuthChallenge.createAuthHandler
+  define-auth-challenge:
+    handler: src/cognito-custom-auth/defineAuthChallenge.defineAuthHandler
+  verify-auth-challenge:
+    handler: src/cognito-custom-auth/verifyAuthChallenge.verifyAuthHandler
+  social-signin-initiate:
+    handler: src/social-sign-in/generateAuthUrl.generateAuthUrl
+    events:
+      - httpApi:
+          path: /api/user/social/url
+          method: post
+  social-signin-initiate:
+    handler: src/social-sign-in/generateToken.generateToken
+    events:
+      - httpApi:
+          path: /api/user/social/token
+          method: post
+
   user-stats:
     handler: src/stats/stats.stats
     events:
@@ -175,6 +197,10 @@ resources:
             Mutable: true
             Name: "ROLE"
             Required: false
+        LambdaConfig:
+          CreateAuthChallenge: arn:aws:lambda:ap-south-1:${aws:accountId}:function:url-shortner-dev-create-auth-challenge
+          DefineAuthChallenge: arn:aws:lambda:ap-south-1:${aws:accountId}:function:url-shortner-dev-define-auth-challenge
+          VerifyAuthChallengeResponse: arn:aws:lambda:ap-south-1:${aws:accountId}:function:url-shortner-dev-verify-auth-challenge
     MyUserPoolClient:
       Type: "AWS::Cognito::UserPoolClient"
       DependsOn:

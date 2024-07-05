@@ -23,3 +23,11 @@ export const MONTH_MAP = {
     11: "Nov",
     12: "Dec"
 }
+export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
+export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || "";
+export const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || "";
+export const AUTH_SCOPES = [
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "https://www.googleapis.com/auth/userinfo.email"
+];
+export const maxWrongPasswordAttempts = 5;
