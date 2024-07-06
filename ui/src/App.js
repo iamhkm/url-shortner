@@ -9,12 +9,14 @@ import UpdateStatus from './url/UpdateStatus'
 import AddUrl from './url/AddUrl'
 import ViewUrl from './url/ViewUrl'
 import UpdateUrl from './url/UpdateUrl'
+import GSignIn from './user/GSignIn'
 
 const App = () => {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<SignInPage />} />
+                <Route path="/" element={<GSignIn />} />
+                <Route path="/signin" element={<SignInPage />} />
                 <Route path="/signup" element={<SignUpPage />} />
                 <Route path="/dashboard" element={<Dashboard/>} />
                 <Route path="/confirmUser" element={<ConfirmUser/>} />

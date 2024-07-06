@@ -25,7 +25,7 @@ export async function stats () {
     const date = dateToday.getDate().toString().padStart(2, '0');
     const users = await scanRecord({
         TableName: process.env.SHORTNER_URLS_USERS_TABLE
-    })
+    });
     for (let user of users){
         createUrlStats(stats, user, year, month, date, monthlyStats, yearlyStats);
         await createHitStats (stats, user.unique_id, year, month, date, monthlyStats, yearlyStats);

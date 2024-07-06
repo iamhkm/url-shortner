@@ -1,49 +1,61 @@
-/* SignInForm.css */
+/* SignInPage.css */
 
 .signin-container {
     max-width: 400px;
-    margin: auto;
-    padding: 20px;
+    margin: 0 auto;
+    padding: 1rem;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.signin-form {
+.signin-form .form-group {
+    margin-bottom: 1rem;
+}
+
+.signin-form .form-control {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.button-group {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
 }
 
-.form-group {
-    margin-bottom: 15px;
+.button-group .btn {
+    flex: 1;
 }
 
-label {
-    font-weight: bold;
-}
-
-.input {
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    width: 100%; /* Make sure the input fields take up full width */
-}
-
-.btn {
-    padding: 10px 20px;
+.button-group .btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #4285F4;
+    color: white;
     border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: #fff;
-    cursor: pointer;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
 }
 
-.btn:hover {
-    background-color: #0056b3;
+.button-group .btn-google:hover {
+    background-color: #357ae8;
 }
 
 .message {
-    margin-top: 15px;
-    font-weight: bold;
-    color: #ff0000;
+    color: red;
+    margin-top: 1rem;
+}
+
+.signup-link {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.signup-link:hover {
+    text-decoration: underline;
 }
