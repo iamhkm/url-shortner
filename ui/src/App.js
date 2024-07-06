@@ -15,7 +15,8 @@ const App = () => {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<SignInPage />} />
+                <Route path="/" element={<GSignIn />} />
+                <Route path="/signin" element={<SignInPage />} />
                 <Route path="/signup" element={<SignUpPage />} />
                 <Route path="/dashboard" element={<Dashboard/>} />
                 <Route path="/confirmUser" element={<ConfirmUser/>} />
@@ -24,7 +25,6 @@ const App = () => {
                 <Route path="/url/update/:uuid" element={<UpdateUrl />} />
                 <Route path="/url/:uuid/status/:status" element={<UpdateStatus />} />
                 <Route path="/url/new" element={<AddUrl/>} />
-                <Route path="/gsignin" element={<GSignIn/>}/>
             </Routes>
         </Router>
     );

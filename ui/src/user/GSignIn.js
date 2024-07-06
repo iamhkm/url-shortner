@@ -29,11 +29,11 @@ const GSignIn = () => {
                     navigate('/dashboard');
                 } else {
                     console.warn('No token found in query parameters.');
-                    navigate("/");
+                    navigate("/signin");
                 }
             } catch (error) {
                 console.error('API Error:', error);
-                navigate("/");
+                navigate("/signin");
             }
         };
 
@@ -44,7 +44,7 @@ const GSignIn = () => {
         return () => {
             isMounted = false; // Cleanup: Set mounted flag to false on component unmount
         };
-    }, []); // Empty dependency array ensures it only runs once on mount
+    }); // Empty dependency array ensures it only runs once on mount
 
     return null; // Component doesn't render any UI, so return null
 };
