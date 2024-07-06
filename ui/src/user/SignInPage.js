@@ -67,7 +67,7 @@ const SignInPage = () => {
                     <button type="submit" className="btn btn-primary">Sign In</button>
                     <button type="button" className="btn btn-primary google-btn" onClick={handleGoogleSignIn}>
                         <FontAwesomeIcon icon={faGoogle} style={{ marginRight: '8px' }} />
-                        Google Sign In
+                        Sign In
                     </button>
                 </div>
             </form>
