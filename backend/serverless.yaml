@@ -67,6 +67,7 @@ provider:
     GOOGLE_CLIENT_ID: ""
     GOOGLE_CLIENT_SECRET: ""
     GOOGLE_REDIRECT_URI: ""
+    # GOOGLE_REDIRECT_URI: "http://localhost:3000/"
 functions:
   healthCheck:
     handler: src/healthCheck.ping
@@ -134,6 +135,8 @@ functions:
       - httpApi:
           path: /api/user/confirm-sign-up
           method: post
+  user-sync:
+    handler: src/cognito-post-confirm/userSync.userSync
   signin:
     handler: src/user/signin.signin
     events:
@@ -204,6 +207,7 @@ resources:
           CreateAuthChallenge: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:url-shortner-dev-create-auth-challenge
           DefineAuthChallenge: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:url-shortner-dev-define-auth-challenge
           VerifyAuthChallengeResponse: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:url-shortner-dev-verify-auth-challenge
+          PostConfirmation: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:url-shortner-dev-user-sync
     MyUserPoolClient:
       Type: "AWS::Cognito::UserPoolClient"
       DependsOn:
@@ -260,6 +264,21 @@ resources:
       Properties:
         Action: lambda:InvokeFunction
         FunctionName: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:url-shortner-dev-verify-auth-challenge
+        Principal: cognito-idp.amazonaws.com
+        SourceArn: !Join
+          - ""
+          - - "arn:aws:cognito-idp:"
+            - !Ref AWS::Region
+            - ":"
+            - !Ref AWS::AccountId
+            - ":userpool/"
+            - !Ref UserPool
+    PermissionForCognitoToPostConfirmation:
+      Type: AWS::Lambda::Permission
+      DependsOn: UserPool
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName: arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:url-shortner-dev-user-sync
         Principal: cognito-idp.amazonaws.com
         SourceArn: !Join
           - ""
