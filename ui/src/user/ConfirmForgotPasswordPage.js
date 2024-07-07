@@ -61,7 +61,7 @@ const ConfirmForgotPasswordPage = () => {
                 <div className="form-group">
                     <label>Password:</label>
                     <input
-                        type="text"
+                        type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
@@ -71,7 +71,7 @@ const ConfirmForgotPasswordPage = () => {
                 <div className="form-group">
                     <label>Confirm Password:</label>
                     <input
-                        type="text"
+                        type="password"
                         value={confirm_password}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required

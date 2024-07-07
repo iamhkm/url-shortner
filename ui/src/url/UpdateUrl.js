@@ -31,7 +31,7 @@ const UpdateUrl = () => {
                 }
             } catch (error) {
                 if (isMounted) {
-                    alert(error.message);
+                    alert(error?.response?.data?.error || error.message);
                     navigate(`url/view/${uuid}`); // Redirect to dashboard after deletion
                 }
             }

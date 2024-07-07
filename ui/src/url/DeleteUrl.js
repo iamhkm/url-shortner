@@ -25,7 +25,7 @@ const DeleteUrl = () => {
                 }
             } catch (error) {
                 if (isMounted) {
-                    alert(error.message);
+                    alert(error?.response?.data?.error || error.message);
                     navigate('/dashboard'); // Navigate back to dashboard on error
                 }
             }

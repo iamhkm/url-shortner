@@ -29,7 +29,7 @@ const ConfirmUser = () => {
             alert("sign up success")
             navigate('/'); // Redirect to dashboard
         } catch (error) {
-            alert(error.response.data.error);
+            alert(error?.response?.data?.error || error.message);
         }
     };
 

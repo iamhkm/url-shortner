@@ -22,7 +22,7 @@ const SignInPage = () => {
             localStorage.setItem("role", response.data.role);
             navigate('/dashboard');
         } catch (error) {
-            alert(error.response.data);
+            alert(error?.response?.data?.error || error.message);
         }
     };
 
