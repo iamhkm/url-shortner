@@ -3,30 +3,32 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // Import necessary routing components
 import '../user/ConfirmUser.css'; // Import CSS file for styling
 
-const ConfirmUser = () => {
-    const [username, setUsername] = useState('');
+const ConfirmForgotPasswordPage = () => {
+    const [email, setUsername] = useState('');
     const [confirmation_code, setConfirmationCode] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirm_password, setConfirmPassword] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
         // Retrieve username from local storage
-        const storedUsername = localStorage.getItem('username');
+        const storedUsername = localStorage.getItem('email');
         if (storedUsername) {
             setUsername(storedUsername);
         }
         else {
             alert("could not fetch username... please try to sign up again")
-            navigate('/'); // Redirect to dashboard
+            navigate('/');
         }
     }, []);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            // Make API call to sign in
-            await axios.post(`${process.env.REACT_APP_USER_API_ENDPOINT}/user/confirm-sign-up`, { username, confirmation_code });
-            localStorage.removeItem("username");
-            alert("sign up success")
+            if (password !== confirm_password) throw new Error("password doesn't match");
+            await axios.post(`${process.env.REACT_APP_USER_API_ENDPOINT}/user/confirm-forgot-password`, { email, confirmation_code, password });
+            localStorage.removeItem("email");
+            alert("password changed successfully");
             navigate('/'); // Redirect to dashboard
         } catch (error) {
             alert(error?.response?.data?.error || error.message);
@@ -38,10 +40,10 @@ const ConfirmUser = () => {
             <h2>Confirm Sign Up</h2>
             <form onSubmit={handleSubmit} className="confirm-signup">
                 <div className="form-group">
-                    <label>Username:</label>
+                    <label>Email:</label>
                     <input
                         type="text"
-                        value={username}
+                        value={email}
                         readOnly
                         className="form-control"
                     />
@@ -56,10 +58,30 @@ const ConfirmUser = () => {
                         className="form-control"
                     />
                 </div>
-                <button type="submit" className="btn btn-primary">Confirm</button>
+                <div className="form-group">
+                    <label>Password:</label>
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className="form-control"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Confirm Password:</label>
+                    <input
+                        type="password"
+                        value={confirm_password}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                        className="form-control"
+                    />
+                </div>
+                <button type="submit" className="btn btn-primary">Submit</button>
             </form>
         </div>
     );
 };
 
-export default ConfirmUser;
+export default ConfirmForgotPasswordPage;

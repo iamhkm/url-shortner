@@ -143,6 +143,18 @@ functions:
       - httpApi:
           path: /api/user/sign-in
           method: post
+  forgot-password-init:
+    handler: src/user/forgotPasswordInit.forgotPasswordInit
+    events:
+      - httpApi:
+          path: /api/user/forgot-password
+          method: post
+  confirm-forgot-password:
+    handler: src/user/forgotPasswordConfirm.forgotPasswordConfirm
+    events:
+      - httpApi:
+          path: /api/user/confirm-forgot-password
+          method: post
   create-auth-challenge:
     handler: src/cognito-custom-auth/createAuthChallenge.createAuthHandler
   define-auth-challenge:

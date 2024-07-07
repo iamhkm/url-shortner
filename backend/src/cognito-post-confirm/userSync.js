@@ -8,7 +8,7 @@ import { getRecord, insertRecord } from "../util/dynamoUtil.js";
 export async function userSync (event, context){
     if (event.triggerSource === "PostConfirmation_ConfirmForgotPassword") {
       console.log("PostConfirmation_ConfirmForgotPassword triggered!");
-      return;
+      return event;
     }
     const attributes = event.request.userAttributes;
     const record = {

@@ -22,7 +22,7 @@ const SignInPage = () => {
             localStorage.setItem("role", response.data.role);
             navigate('/dashboard');
         } catch (error) {
-            alert(error.response.data.error);
+            alert(error?.response?.data?.error || error.message);
         }
     };
 
@@ -73,6 +73,7 @@ const SignInPage = () => {
             </form>
             {message && <p className="message">{message}</p>}
             <p>Don't have an account? <Link to="/signup" className="signup-link">Sign Up</Link></p>
+            <p>Forgot Password? <Link to="/forgotPassword" className="signup-link">Forgot Password</Link></p>
         </div>
     );
 };
