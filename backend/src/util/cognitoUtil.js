@@ -7,9 +7,12 @@ import {
   AdminCreateUserCommand,
   AdminSetUserPasswordCommand,
   AdminUpdateUserAttributesCommand,
-  RespondToAuthChallengeCommand 
+  RespondToAuthChallengeCommand,
+  ListUsersCommand,
+  AdminDeleteUserCommand,
+  ResendConfirmationCodeCommand
 } from "@aws-sdk/client-cognito-identity-provider";
-import { generateCognitoPassword, generateRandomString } from "./common.js";
+import { generateCognitoPassword } from "./common.js";
 import { COGNITO_CUSTOM_AUTH_CHALLENGE, USER_POOL_CLIENT_ID, USER_POOL_ID, USER_ROLE_PRIME } from "./constants.js";
 
 // Initialize the Cognito Client
@@ -132,5 +135,50 @@ export async function adminLoginOverride(email){
   }catch(err){
     console.log("error in adminLoginOverride " ,err);
     throw new Error(err.message);
+  }
+}
+
+export async function adminFindUserByEmail(email) {
+  const params = {
+    UserPoolId: USER_POOL_ID,
+    Filter: `email = "${email}"`
+  };
+  try {
+    const command = new ListUsersCommand(params);
+    const response = await client.send(command);
+    return response.Users ? response.Users : [];
+  } catch (error) {
+    console.log("error filtering user ", error);
+    throw new Error(error.message);
+  }
+}
+
+export async function adminDeleteUser(username) {
+  const params = {
+    UserPoolId: USER_POOL_ID,
+    Username: username,
+  };
+  try {
+    const command = new AdminDeleteUserCommand(params);
+    await client.send(command);
+    console.log(`User ${username} has been deleted successfully.`);
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    throw new Error(error.message);
+  }
+}
+
+export async function resendConfirmationCode(username) {
+  const params = {
+    ClientId: USER_POOL_CLIENT_ID,
+    Username: username,
+  };
+  try {
+    const command = new ResendConfirmationCodeCommand(params);
+    const response = await client.send(command);
+    console.log(`Confirmation code resent to ${username}:`, response);
+  } catch (error) {
+    console.error("Error resending confirmation code:", error);
+    throw new Error(error.message);
   }
 }

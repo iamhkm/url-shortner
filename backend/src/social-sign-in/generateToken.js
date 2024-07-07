@@ -14,7 +14,7 @@ import {
     createStats,
 } from '../util/common.js';
 import { getUserInfo } from "../util/googleUtil.js";
-import { adminCreateUser, adminLoginOverride, getUserByToken } from "../util/cognitoUtil.js";
+import { adminCreateUser, adminDeleteUser, adminFindUserByEmail, adminLoginOverride, getUserByToken } from "../util/cognitoUtil.js";
 import { getRecord, insertRecord, scanRecord } from "../util/dynamoUtil.js";
 
 export async function generateToken(event, context) {
@@ -30,18 +30,16 @@ export async function generateToken(event, context) {
         const tokens = await oauth2Client.getToken(decodedToken);
         const profile = await getUserInfo(tokens.tokens.access_token);
         const email = profile.emailAddresses[0].value.toLocaleLowerCase();
-        console.log("email fetched ", email);
-        const input = {
-            TableName: process.env.SHORTNER_URLS_USERS_TABLE,
-            FilterExpression: "email = :email",
-            ExpressionAttributeValues: {
-              ":email": email
-            }
-        };
-        console.log("input here ", input);
-        const record = await scanRecord(input);
-        console.log("response from db ", record);
-        if (!record || record.length < 1) {
+        let userExist = false;
+        const result = await adminFindUserByEmail(email);
+        for (let user of result){
+          if (user.UserStatus === "CONFIRMED") {
+            userExist = true;
+            continue;
+          }
+          await adminDeleteUser(user.Username);
+        }
+        if (userExist === false) {
             const username = generateRandomString();
             await adminCreateUser(username, email);
             const record = {

@@ -26,7 +26,6 @@ const SignUpPage = () => {
             navigate('/confirmUser'); // Redirect to sign-in page
         } catch (error) {
             alert(error.response.data.error);
-            navigate("/");
             // setMessage('Error signing in. Please try again.');
         }
     };

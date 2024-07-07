@@ -30,7 +30,6 @@ const ConfirmUser = () => {
             navigate('/'); // Redirect to dashboard
         } catch (error) {
             alert(error.response.data.error);
-            navigate('/');
         }
     };
 
