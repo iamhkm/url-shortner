@@ -10,6 +10,7 @@ const SignUpPage = () => {
     const [formData, setFormData] = useState({
         username: '',
         password: '',
+        confirm_password: ''
     });
     const [message] = useState('');
 
@@ -21,11 +22,13 @@ const SignUpPage = () => {
         event.preventDefault();
 
         try {
+            if (formData.password !== formData.confirm_password) throw new Error("password doesn't match");
             const response = await axios.post(`${process.env.REACT_APP_USER_API_ENDPOINT}/user/signup`, formData);
             localStorage.setItem("username", response.data.id)
             navigate('/confirmUser'); // Redirect to sign-in page
         } catch (error) {
-            alert(error.response.data.error);
+            // console.log(error);
+            alert(error?.response?.data?.error || error.message);
             // setMessage('Error signing in. Please try again.');
         }
     };
@@ -51,6 +54,17 @@ const SignUpPage = () => {
                         type="password"
                         name="password"
                         value={formData.password}
+                        onChange={handleChange}
+                        required
+                        className="form-control"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Confirm Password:</label>
+                    <input
+                        type="password"
+                        name="confirm_password"
+                        value={formData.confirm_password}
                         onChange={handleChange}
                         required
                         className="form-control"

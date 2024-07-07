@@ -10,7 +10,9 @@ import {
   RespondToAuthChallengeCommand,
   ListUsersCommand,
   AdminDeleteUserCommand,
-  ResendConfirmationCodeCommand
+  ResendConfirmationCodeCommand,
+  ForgotPasswordCommand,
+  ConfirmForgotPasswordCommand
 } from "@aws-sdk/client-cognito-identity-provider";
 import { generateCognitoPassword } from "./common.js";
 import { COGNITO_CUSTOM_AUTH_CHALLENGE, USER_POOL_CLIENT_ID, USER_POOL_ID, USER_ROLE_PRIME } from "./constants.js";
@@ -180,5 +182,37 @@ export async function resendConfirmationCode(username) {
   } catch (error) {
     console.error("Error resending confirmation code:", error);
     throw new Error(error.message);
+  }
+}
+
+export async function forgotPassword(email) {
+  const command = new ForgotPasswordCommand({
+      ClientId: USER_POOL_CLIENT_ID,
+      Username: email,
+  });
+  try {
+      const response = await client.send(command);
+      console.log('Forgot Password response:', response);
+      return response;
+  } catch (error) {
+      console.error('Error during forgot password:', error);
+      throw new Error(error.message);
+  }
+}
+
+export async function confirmForgotPassword(email, confirmationCode, newPassword) {
+  const command = new ConfirmForgotPasswordCommand({
+      ClientId: USER_POOL_CLIENT_ID,
+      Username: email,
+      ConfirmationCode: confirmationCode,
+      Password: newPassword,
+  });
+  try {
+      const response = await client.send(command);
+      console.log('Confirm Forgot Password response:', response);
+      return response;
+  } catch (error) {
+      console.error('Error during confirm forgot password:', error);
+      throw new Error(error.message);
   }
 }

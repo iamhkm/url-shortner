@@ -10,6 +10,8 @@ import AddUrl from './url/AddUrl'
 import ViewUrl from './url/ViewUrl'
 import UpdateUrl from './url/UpdateUrl'
 import GSignIn from './user/GSignIn'
+import ForgotPasswordPage from './user/ForgotPasswordPage';
+import ConfirmForgotPasswordPage from './user/ConfirmForgotPasswordPage';
 
 const App = () => {
     return (
@@ -25,6 +27,8 @@ const App = () => {
                 <Route path="/url/update/:uuid" element={<UpdateUrl />} />
                 <Route path="/url/:uuid/status/:status" element={<UpdateStatus />} />
                 <Route path="/url/new" element={<AddUrl/>} />
+                <Route path="/forgotPassword" element={<ForgotPasswordPage/>} />
+                <Route path="/confirmForgotPassword" element={<ConfirmForgotPasswordPage/>} />
             </Routes>
         </Router>
     );

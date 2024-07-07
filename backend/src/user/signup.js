@@ -19,7 +19,7 @@ export async function signup (event, context){
         if (!input.username || !input.password) throw new Error("username and password is required");
         const result = await adminFindUserByEmail(input.username);
         const username = generateRandomString();
-        const addUser = true;
+        let addUser = true;
         const signUpParams = {
           ClientId: process.env.USER_POOL_CLIENT_ID,
           Username: username,
